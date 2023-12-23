@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct {
@@ -38,9 +39,26 @@ void createUser(User *user) {
     printf("Password: ");
     scanf("%ms", &(user->password));
     printf("First name: ");
-    scanf("%ms", &(user->firstName));
+    char buffer[100];
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    buffer[strcspn(buffer, "\n")] = '\0'; // Remove newline character
+    if (buffer[0] != '\0') {
+        user->firstName = malloc(strlen(buffer) + 1);
+        strcpy(user->firstName, buffer);
+    } else {
+        user->firstName = NULL;
+    }
     printf("Last name: ");
-    scanf("%ms", &(user->lastName));
+    fflush(stdin);
+    fgets(buffer, sizeof(buffer), stdin);
+    buffer[strcspn(buffer, "\n")] = '\0'; // Remove newline character
+    if (buffer[0] != '\0') {
+        user->lastName = malloc(strlen(buffer) + 1);
+        strcpy(user->lastName, buffer);
+    } else {
+        user->lastName = NULL;
+    }
     user->id = userCount;
     user->groupid = groupCount;
     printf("User %s created successfully!", user->username);
@@ -55,22 +73,24 @@ int shell(User user) {
         cmd[strcspn(cmd, "\n")] = '\0';
         if (strcmp(cmd, "permissions") == 0) {
             printf("[PERMISSIONS]\n");
-            if (user.permissions.addUser) printf("user.permissions.addUser [granted]\n");
-            else printf("user.permissions.addUser [denied]\n");
-            if (user.permissions.addGroup) printf("user.permissions.addGroup [granted]\n");
-            else printf("user.permissions.addGroup [denied]\n");
-            if (user.permissions.deleteUser) printf("user.permissions.deleteUserdeleteUser [granted]\n");
-            else printf("user.permissions.deleteUser [denied]\n");
-            if (user.permissions.deleteGroup) printf("user.permissions.deleteGroup [granted]\n");
-            else printf("user.permissions.deleteGroup [denied]\n");
+            if (user.permissions.addUser) printf("user.permissions.addUser\t\t[granted]\n");
+            else printf("user.permissions.addUser\t\t[denied]\n");
+            if (user.permissions.addGroup) printf("user.permissions.addGroup\t\t[granted]\n");
+            else printf("user.permissions.addGroup\t\t[denied]\n");
+            if (user.permissions.deleteUser) printf("user.permissions.deleteUserdeleteUser\t\t[granted]\n");
+            else printf("user.permissions.deleteUser\t\t[denied]\n");
+            if (user.permissions.deleteGroup) printf("user.permissions.deleteGroup\t\t[granted]\n");
+            else printf("user.permissions.deleteGroup\t\t[denied]\n");
         } else if (strcmp(cmd, "logout") == 0) {
-            printf("Goodbye, %s!", user.username);
+            printf("Goodbye, %s!\n", user.username);
             return 0;
         } else if (strcmp(cmd, "help") == 0) {
             printf("[HELP]\n");
             printf("help\t\t\tPrints a list of available commands.\n"
-                   "permissions\t\t\tPrints the status of each permission within the logged user.\n"
+                   "permissions\t\tPrints the status of each permission within the logged user.\n"
                    "logout\t\t\tLogs out the current user.\n");
+        } else if (strcmp(cmd, "") == 0) {
+            continue;
         } else {
             printf("Unknown command!\n");
             printf("Use 'help' for a list of available commands.\n");
@@ -92,7 +112,6 @@ int main() {
                    "    `8888888P'         8 8888    `Y8888P ,88P'     8 8888       8 888888888888 ,8'         `         `8.`8888. \n";
 
     printf("%s", banner);
-
     while (1) {
         if (userCount == 0)
             printf("\n1. Create user\n2. Login as guest\n3. Exit\n> ");
@@ -100,6 +119,7 @@ int main() {
             printf("\n0. Login\n1. Create user\n2. Login as guest\n3. "
                    "Exit\n> ");
         int choice;
+        fflush(stdin);
         scanf("%d", &choice);
         switch (choice) {
             case 0: {
@@ -134,6 +154,7 @@ int main() {
                 guest.groupid = -1;
                 printf("Welcome, %s!\n", guest.username);
                 shell(guest);
+                break;
             }
             case 3:
                 printf("Goodbye!\n");
