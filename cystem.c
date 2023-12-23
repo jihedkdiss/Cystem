@@ -10,12 +10,22 @@ int groupCount = 0;
 User users[32];
 Group groups[64];
 
-void createUser(User *user) {
-    printf("[CREATE USER]\n");
+int createUser(User *user) {
     printf("Username: ");
     scanf("%ms", &(user->username));
     printf("Password: ");
-    scanf("%ms", &(user->password));
+    char* pwd1;
+    scanf("%ms", &pwd1);
+    printf("Retype password: ");
+    char* pwd2;
+    scanf("%ms", &pwd2);
+    if(strcmp(pwd1, pwd2) == 0) {
+        user->password = pwd1;
+    }
+    else {
+        printf("\033[31mPasswords don't match!\033[0m\n");
+        return 0;
+    }
     printf("First name: ");
     char buffer[100];
     fflush(stdin);
@@ -39,7 +49,11 @@ void createUser(User *user) {
     }
     user->id = userCount;
     user->groupid = groupCount;
-    printf("User %s created successfully!\n", user->username);
+    user->permissions.addUser = true;
+    user->permissions.addGroup = true;
+    userCount++;
+    printf("\033[32mUser %s created successfully!\033[0m\n", user->username);
+    shell(*user);
 }
 
 int main() {
@@ -67,7 +81,6 @@ int main() {
         scanf("%d", &choice);
         switch (choice) {
             case 0: {
-                printf("[LOGIN]\n");
                 User user;
                 printf("Username: ");
                 scanf("%ms", &user.username);
@@ -84,12 +97,11 @@ int main() {
                     printf("Welcome, %s!\n", user.username);
                     shell(user);
                 } else
-                    printf("Please check your username or password!\n");
+                    printf("\033[31mPlease check your username or password!\033[0m\n");
                 break;
             }
             case 1:
                 createUser(&users[userCount]);
-                userCount++;
                 break;
             case 2: {
                 User guest;
@@ -104,7 +116,7 @@ int main() {
                 printf("Goodbye!\n");
                 return 0;
             default:
-                printf("No such option! Try again.\n");
+                printf("\033[31mNo such option! Try again.\033[0m\n");
         }
     }
 }
