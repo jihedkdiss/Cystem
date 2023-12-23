@@ -26,19 +26,25 @@ typedef struct {
     int groupid;
 } User;
 
+int userCount = 0;
+int groupCount = 0;
+User users[32];
+Group groups[64];
+
 void createUser(User *user) {
     printf("[CREATE USER]\n");
     printf("Username: ");
     scanf("%ms", &(user->username));
     printf("Password: ");
     scanf("%ms", &(user->password));
+    printf("First name: ");
+    scanf("%ms", &(user->firstName));
+    printf("Last name: ");
+    scanf("%ms", &(user->lastName));
+    user->id = userCount;
+    user->groupid = groupCount;
     printf("User %s created successfully!", user->username);
 }
-
-int userCount = 0;
-int groupCount = 0;
-User users[32];
-Group groups[64];
 
 int shell(User user) {
     while (1) {
@@ -96,7 +102,7 @@ int main() {
         int choice;
         scanf("%d", &choice);
         switch (choice) {
-            case 0:
+            case 0: {
                 printf("[LOGIN]\n");
                 User user;
                 printf("Username: ");
@@ -116,10 +122,19 @@ int main() {
                 } else
                     printf("Please check your username or password!");
                 break;
+            }
             case 1:
                 createUser(&users[userCount]);
                 userCount++;
                 break;
+            case 2: {
+                User guest;
+                guest.username = "guest";
+                guest.id = -1;
+                guest.groupid = -1;
+                printf("Welcome, %s!\n", guest.username);
+                shell(guest);
+            }
             case 3:
                 printf("Goodbye!\n");
                 return 0;
