@@ -55,7 +55,7 @@ int main() {
                    "   8888     ,88'       8 8888   `8b.  ;8.`8888     8 8888       8 8888          ,8'       `8        `8.`8888.  \n"
                    "    `8888888P'         8 8888    `Y8888P ,88P'     8 8888       8 888888888888 ,8'         `         `8.`8888. \n";
 
-    printf("%s\n", banner);
+    printf("\033[33m%s\033[0m\n", banner);
     while (1) {
         if (userCount == 0)
             printf("1. Create user\n2. Login as guest\n3. Exit\n> ");

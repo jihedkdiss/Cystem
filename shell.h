@@ -29,9 +29,20 @@ int shell(User user) {
                    "logout\t\t\tLogs out the current user.\n");
         } else if (strcmp(cmd, "") == 0) {
             continue;
+        } else if (strcmp(cmd, "whoami") == 0) {
+            printf("%s\n", user.username);
+        } else if (strcmp(cmd, "passwd") == 0) {
+            printf("New password: ");
+            char* pwd1;
+            scanf("%ms", &pwd1);
+            printf("Retype new password: ");
+            char* pwd2;
+            scanf("%ms", &pwd2);
+            if(strcmp(pwd1, pwd2) == 0) user.password = pwd1;
+            else printf("Passwords don't match!\n");
         } else {
-            printf("Unknown command!\n");
-            printf("Use 'help' for a list of available commands.\n");
+            printf("%s: Unknown command!\n", cmd);
+            printf("Use (help) for a list of available commands.\n");
         }
     }
 }
